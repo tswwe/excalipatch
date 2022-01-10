@@ -35,5 +35,5 @@ Excalipatch 是一个便携小程序，不需要安装，只要到[发行版页�
 * 该方案不具有持久性。每次 Obsidian-excalidraw-plugin 升级都会导致 `main.js` 被还原，需要重新应用一次补丁。
 * 该方案不保证可靠性。Excalipatch 通过识别 `main.js` 中的某些特征来对其进行修补，一旦源代码发生较大改动，可能会导致修补失败。如果发生这种情况，请[提 Issue](https://github.com/tswwe/excalipatch/issues) 或者 PR。
 * Excalipatch 目前只能在 Windows 系统中使用，但生成的文件是可以跨平台使用的。
-* 备份好最初的 `main.js`，或者做好升级或重装 Obsidian-excalidraw-plugin 的准备。
+* 重要：请备份好最初的 `main.js`。如果你发现 Obsidian-excalidraw-plugin 不能正常工作，请第一时间恢复 `main.js`，以确认是否由本工具造成。如果你没有备份，也可以直接升级或重装 Obsidian-excalidraw-plugin 。
 
