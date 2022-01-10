@@ -34,7 +34,7 @@ Although Excalidraw is easy to use, you must keep in mind that:
 * This is just a workaround, NOT a full solution.
 * This is NOT permanent. Every time when Obsidian-excalidraw-plugin updates, the `main.js` will be restored and need to be patched again.
 * This is NOT robust. Excalipatch hacks the code of `main.js` by identifying its patterns. Thus, if the code makes big changes, Excalipatch may fail on recognizing. In that case, please open an issue or submit PRs.
-* Excalipatch only supports Windows OS currently, though the patched `main.js` file is cross-platform.
+* Excalipatch only supports Windows OS currently, though the patched `main.js` file may be cross-platform.
 * REMEMBER: Backup the origin `main.js` file. If you find anything wrong with your obsidian-excalidraw-plugin, please restore `main.js` first to check if it is caused by Excalipatch. If you don't have a backup, you can also update/reinstall Obsidian-excalidraw-plugin.
 
 # Contributing
