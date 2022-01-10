@@ -15,7 +15,7 @@ Excalipatch 的主要功能：
 
 Excalipatch 是一个便携小程序，不需要安装，只要到[发行版页面](https://github.com/tswwe/excalipatch/releases)下载 `excalipatch.exe` 即可。
 
-当然，如果想要使用它，你需要先安装 Obsidian 和 Obsidian-excalidraw-plugin。此外，还需要自己准备一个字体文件（上图示例中所用字体是“沐瑶软笔手写体”）。
+当然，如果想要使用它，你需要先安装最新版本的 Obsidian（0.12.16+） 和 Obsidian-excalidraw-plugin（1.5.15+）。此外，还需要自己准备一个字体文件（上图示例中所用字体是“沐瑶软笔手写体”）。
 
 # 使用说明
 
@@ -33,7 +33,12 @@ Excalipatch 是一个便携小程序，不需要安装，只要到[发行版页�
 
 * 这只是一个临时的应对方案，而不是最终的解决方案。
 * 该方案不具有持久性。每次 Obsidian-excalidraw-plugin 升级都会导致 `main.js` 被还原，需要重新应用一次补丁。
-* 该方案不保证可靠性。Excalipatch 通过识别 `main.js` 中的某些特征来对其进行修补，一旦源代码发生较大改动，可能会导致修补失败。如果发生这种情况，请[提 Issue](https://github.com/tswwe/excalipatch/issues) 或者 PR。
+* 该方案不保证可靠性。Excalipatch 通过识别 `main.js` 中的某些特征来对其进行修补，一旦源代码发生较大改动，可能会导致修补失败。如果发生这种情况，请提 Issue 或 PR。
 * Excalipatch 目前只能在 Windows 系统中使用，但生成的文件是可以跨平台使用的。
 * 重要：请备份好最初的 `main.js`。如果你发现 Obsidian-excalidraw-plugin 不能正常工作，请第一时间恢复 `main.js`，以确认是否由本工具造成。如果你没有备份，也可以直接升级或重装 Obsidian-excalidraw-plugin 。
+
+# 如何贡献
+
+* 如果软件在使用过程中报错，请[提 Issue](https://github.com/tswwe/excalipatch/issues)，并附上错误信息截图和相关文件（通常包括 `main.js`，`manifest.json`）。
+* 如果你想参与代码的开发，请 fork 并克隆本仓库到本地，仓库中的 `project` 目录包含了项目所有的工程文件，是用 [aardio](https://ide.update.aardio.com/releases/aardio.7z) 编写的。修改完成后，欢迎提 PR。
 

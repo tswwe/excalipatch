@@ -1,6 +1,7 @@
 # aardio
-.build
-dist
+.build/
+dist/
+res/fonts/
 build_error_log.txt
 
 # Compiled Lua sources

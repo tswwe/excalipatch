@@ -15,7 +15,7 @@ Here are the key features of Excalipatch:
 
 Excalipatch doesn't need to install. It's a portable tiny tool on Windows OS (at least XP). Just download `excalipatch.exe` from [Releases](https://github.com/tswwe/excalipatch/releases) page.
 
-Though to use it, you must have Obsidian and Obsidian-excalidraw-plugin installed. A local font file is also needed (The font used in the demo is "Muyao-Softbrush").
+Though to use it, you must have the lateset Obsidian (version 0.12.16+) and Obsidian-excalidraw-plugin (version 1.5.15+) installed. A local font file is also needed (The font used in the demo is "Muyao-Softbrush").
 
 # Usage
 
@@ -33,6 +33,12 @@ Although Excalidraw is easy to use, you must keep in mind that:
 
 * This is just a workaround, NOT a full solution.
 * This is NOT permanent. Every time when Obsidian-excalidraw-plugin updates, the `main.js` will be restored and need to be patched again.
-* This is NOT robust. Excalipatch hacks the code of `main.js` by identifying its patterns. Thus, if the code makes big changes, Excalipatch may fail on recognizing. In that case, please [open an issue](https://github.com/tswwe/excalipatch/issues) or submit PRs.
+* This is NOT robust. Excalipatch hacks the code of `main.js` by identifying its patterns. Thus, if the code makes big changes, Excalipatch may fail on recognizing. In that case, please open an issue or submit PRs.
 * Excalipatch only supports Windows OS currently, though the patched `main.js` file is cross-platform.
-* REMEMBER: Backup the origin `main.js` file. If you find anything wrong with your obsidian-excalidraw-plugin, please restore `main.js` first to check if it is caused by Excalipatch. If you don't have a backup, you can also update/reinstall Obsidian-excalidraw-plugin. 
+* REMEMBER: Backup the origin `main.js` file. If you find anything wrong with your obsidian-excalidraw-plugin, please restore `main.js` first to check if it is caused by Excalipatch. If you don't have a backup, you can also update/reinstall Obsidian-excalidraw-plugin.
+
+# Contributing
+
+* If Excalipatch reports error when running, please [open an issue](https://github.com/tswwe/excalipatch/issues) and submit error message screenshot and related files including `main.js` and `manifest.json` in obsidian-excalidraw-plugin folder.
+* If you want to contribute to the code, please fork and clone this repo, and work on the `project` folder which contains all the source code. The code is written in [aardio](https://ide.update.aardio.com/releases/aardio.7z).
+
