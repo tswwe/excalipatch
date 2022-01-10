@@ -1,0 +1,204 @@
+﻿
+import string;
+import table;
+
+namespace core;
+
+class gap{
+	ctor( ){
+		..table.gc(this, "close");
+	}
+	clip = lambda(jsAll) null;
+	paste = lambda(jsAll, jsBlockOld, jsBlockNew) ..string.replace(jsAll,  "<@@"++jsBlockOld++"@>",  jsBlockNew);
+	fromJs = lambda(jsBlock) null;
+	toJs = lambda(aarObj, jsBlockOld) null;
+	jsBlock = null;
+	read = function(jsAll) begin
+		this.jsBlock = this.clip(jsAll);
+		if(this.jsBlock==null) return null, "WARNING: clip FUNCTION FAILED!";
+		
+		var aarObj = this.fromJs(this.jsBlock);
+		if(aarObj==null) return null, "WARNING: fromJs FUNCTION FAILED!";
+		return aarObj;
+	end;
+	write = function(jsAll, aarObjNew, isInsert) begin
+		assert(aarObjNew,  "ERROR: write FUNCTION LACKS OF PARAMETER aarObjNew!");
+		var jsBlockNew = this.toJs(aarObjNew, this.jsBlock);
+		if(jsBlockNew==null) return null, "WARNING: toJs FUNCTION FAILED!"; 
+		
+		var jsAllNew = this.paste(jsAll, this.jsBlock, isInsert ? this.jsBlock++jsBlockNew : jsBlockNew);
+		if(jsAllNew==null) return null, "WARNING: paste FUNCTION FAILED!";
+		this.jsBlock = jsBlockNew;
+		return jsAllNew; 
+	end;
+	insert = lambda(jsAll, aarObjNew) this.write(jsAll, aarObjNew, true) ;
+	remove = function(jsAll) begin
+		var jsAllNew = this.paste(jsAll, this.jsBlock, "");
+		if(jsAllNew==null) return null, "WARNING: paste FUNCTION FAILED!";
+		this.close();
+		return jsAllNew;
+	end;
+	close = function() begin
+		//..table.clear(this);
+		this = null;
+	end;
+}
+
+class lang{
+	/**
+		c={code:"en",label:"English"},
+		d=[	{code:"ar-SA",label:"\u0627\u0644\u0639\u0631\u0628\u064A\u0629",rtl:!0},
+			...,
+			{code:"kk-KZ",label:"\u049A\u0430\u0437\u0430\u049B \u0442\u0456\u043B\u0456"} ]
+	**/
+	ctor(){
+		this = ..core.gap()
+	};
+	clip = function(jsAll) begin
+		var pattern = //=\{code\:".+?",label\:".+?"<@,rtl:!0@>{0,1}\},
+		var jsBlock = ..string.match(jsAll, pattern);
+		return jsBlock; 
+	end;
+	fromJs = function(jsBlock) begin
+		var pattern = //(\{code\:"(.+?)",label\:"(.+?)"<@,rtl:!0@>{0,1}\})
+		var js, code, label = ..string.match(jsBlock, pattern);
+		return (code!=null) ? {code=code, label=..string.unescape(label), js=js} : null;
+	end;
+	toJs = lambda(aarObj, jsBlockOld) "="++..string.escape(aarObj.js,true)++","  ;
+}
+
+class langList{
+	ctor(){
+		this = ..core.gap()
+	};
+	clip = function(jsAll) begin
+		var pattern = //=\{code\:".+?",label\:".+?"<@,rtl:!0@>{0,1}\},\w+?=\[(\{code\:.+?"\})\]
+		var jsBlock = ..string.match(jsAll, pattern);
+		return jsBlock; 
+	end;
+	fromJs = function(jsBlock) begin
+		var pattern = //(\{code\:"(.+?)",label\:"(.+?)"<@,rtl:!0@>?\})
+		var langList = {};
+		for js,code,label in ..string.gmatch(jsBlock, pattern) { 
+		    if (code==null) continue;
+		    ..table.push(langList, {code=code, label=..string.unescape(label), js=js});
+		}
+		return langList; 
+	end;
+	write = lambda() assertf("ERROR: write METHOD OF langList IS FORBIDDENED!");
+}
+
+class textButtons{
+	/**
+		PanelComponent:e3=>{
+ 		let{elements:t4,appState:a3,updateData:r4}=e3,
+ 		i3=[{value:n3.ut.Virgil,text:b("labels.handDrawn"),icon:(0,v2.jsx)(nl2,{theme:a3.theme})},
+     		{value:n3.ut.Helvetica,text:b("labels.normal"),icon:(0,v2.jsx)(ol,{theme:a3.theme})},
+     		{value:n3.ut.Cascadia,text:b("labels.code"),icon:(0,v2.jsx)(sl,{theme:a3.theme})} | ];return
+		           1  2  3(fontName)   4(buttonName)             5      6(iconName)     7
+	**/
+	ctor(){
+		this = ..core.gap()
+	};
+	clip = function(jsAll) begin
+		var pattern = //PanelComponent\:.{1,1000}?labels\.code.+?\];return
+		var jsBlock = ..string.match(jsAll, pattern);
+		return jsBlock; 
+	end;
+	fromJs = function(jsBlock) begin
+		var pattern = //\{value\:(\w+?)\.(\w+?)\.(\w+?),text\:(.+?),icon\:(.+?)\((\w+?),(.+?)\)\}
+		var buttonObjs = {};
+		for m1,m2,m3,m4,m5,m6,m7 in ..string.gmatch(jsBlock, pattern) {
+	   		if(m1==null) continue;
+	    	..table.push(buttonObjs, {m1,m2,m3,m4,m5,m6,m7} )
+		};
+		return buttonObjs; 
+	end;
+	toJs = function(aarObj, jsBlockOld) begin
+		var js = ..string.join(
+			..table.map(aarObj,  lambda(v,k)..string.format(`{value:%s.%s.%s,text:%s,icon:%s(%s,%s)}`, ..table.unpack(v))  )
+		, ",");
+		var pattern = //(PanelComponent\:.+?=\[)\{.+?\}(\];return)
+		var jsBlockNew = ..string.replace(jsBlockOld, pattern, "\1"++js++"\2");
+		return jsBlockNew;
+	end;
+}
+
+class fontNames{
+	ctor(){
+		this = ..core.gap()
+	};
+	clip = function(jsAll) begin
+		var pattern = //=\{Virgil\:1,Helvetica\:2,Cascadia\:3.*?\}
+		var jsBlock = ..string.match(jsAll, pattern);
+		return jsBlock; 
+	end;
+	fromJs = function(jsBlock) begin
+		var pattern = //([^\{\}\:,]+?)\:(\d+)[,\}]
+		var nameObjs = {};
+		for m1,m2 in ..string.gmatch(jsBlock, pattern) {
+	   		if(m1==null) continue;
+	    	..table.push(nameObjs, {m1,m2} )
+		};
+		return nameObjs; 
+	end;
+	toJs = function(aarObj, jsBlockOld) begin
+		var js = ..table.map(aarObj, lambda(v,k) ..string.format(`%s:%s`, ..table.unpack(v)) )
+			js = ..string.join(js, ',');
+			js = ..string.concat("={", js, "}");
+		var pattern = //=\{Virgil\:1,Helvetica\:2,Cascadia\:3.*?\}
+		var jsBlockNew = ..string.replace(jsBlockOld, pattern, js);
+		return jsBlockNew;
+	end;
+}
+
+class icon{
+	/**
+		nl2=i2().memo(e3=>es2((0,v2.jsx)("path",{fill:"var(--icon-fill-color)",d:"..."}),{width:448,height:512})),|
+	     1(iconName)                                                               2              3         4
+	**/
+	ctor(iconName) {           // if you want to add a new icon: *iconName* must be baseIconName; call *insert* method rather than *write*
+		this = ..core.gap();   // if you want to delete an existed icon: *iconName* be target icon name; call *remove* method
+	}
+	clip = function(jsAll) begin
+		var pattern = iconName ++ `=.{1,25}?memo.+?,d\:".+?"\}\),\{width\:.+?\}\)\),`
+		var jsBlock = ..string.match(jsAll, pattern);
+		return jsBlock;
+	end;
+	fromJs = function(jsBlock) begin
+		var pattern = //(\w+?)=.+?d\:"(.+?)"\}\),\{width\:(.+?),height\:(.+?)\}\)\),
+		var name, data, width, height = ..string.match(jsBlock, pattern);
+		assert(name==iconName, "Error: icon name is not equal!");
+		return data!=null ? {name=name, data=data, width=width, height=height} : null;
+	end;
+	toJs = function(aarObj, jsBlockOld) begin
+		var pattern = ..string.format(`%s(=.+?,d\:").+?("\}\),\{width\:).+?(,height\:).+?(\}\)\),)`, iconName)
+		var js = ..string.format("%s\1%s\2%s\3%s\4", aarObj.name, aarObj.data, aarObj.width, aarObj.height)
+		var jsBlockNew = ..string.replace(jsBlockOld, pattern, js);
+		return jsBlockNew;
+	end;
+}
+
+class fontDef{
+	/* 
+		@font-face{font-family:"Virgil";src:url('+p2+');font-display:swap}
+	*/
+	ctor(fontName) {           // if you want to add a new font: *fontName* must be baseFontName; call *insert* method rather than *write*
+		this = ..core.gap();   // if you want to delete an existed font: *fontName* be target font name; call *remove* method
+	}
+	clip = function(jsAll) begin
+		var pattern = ..string.format(`\@font-face\{font-family\:"%s";src\:.+?;font-display\:swap\}`, fontName)
+		var jsBlock = ..string.match(jsAll, pattern);
+		return jsBlock;
+	end;
+	fromJs = function(jsBlock) begin
+		var pattern = //\@font-face\{font-family\:"(.+?)";src\:(.+?);font-display\:swap\}
+		var name, src = ..string.match(jsBlock, pattern);
+		assert(name==fontName, "Error: font name is not equal!");
+		return src!=null ? {name=name, src=src} : null;
+	end;
+	toJs = function(aarObj, jsBlockOld) begin
+		var jsBlockNew = ..string.format(`@font-face{font-family:"%s";src:%s;font-display:swap}`, aarObj.name, aarObj.src);
+		return jsBlockNew; 
+	end;
+}

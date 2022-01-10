@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="excalipatch" libEmbed="true" icon="D:\Documents\Git\excalipatch\assets\icon.ico" ui="console" output="excalipatch.exe" CompanyName="" FileDescription="excalipatch" LegalCopyright="Copyright (C) thXnder 2022" ProductName="excalipatch" InternalName="excalipatch" FileVersion="0.0.1.16" ProductVersion="0.0.1.16" publishDir="/dist/" dstrip="false" local="false" ignored="false">
+	<file name="main.aardio" path="main.aardio" comment="启动程序代码"/>
+	<folder name="资源文件" path="res" embed="false" local="false" ignored="false">
+		<folder name="fonts" path="res\fonts" comment="res\fonts" local="false" embed="false" ignored="true">
+			<file name="Muyao-Softbrush.ttf" path="res\fonts\Muyao-Softbrush.ttf" comment="res\fonts\Muyao-Softbrush.ttf"/>
+		</folder>
+		<folder name="icons" path="res\icons" comment="res\icons" local="false" embed="true" ignored="false">
+			<file name="cnHandIcon.svg" path="res\icons\cnHandIcon.svg" comment="res\icons\cnHandIcon.svg"/>
+		</folder>
+	</folder>
+</project>

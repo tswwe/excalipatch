@@ -1,3 +1,8 @@
+# aardio
+.build
+dist
+build_error_log.txt
+
 # Compiled Lua sources
 luac.out
 

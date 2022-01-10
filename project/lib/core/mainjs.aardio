@@ -1,0 +1,125 @@
+﻿
+import core;
+namespace core;
+import fsys;
+import crypt.bin;
+
+class mainjs{
+	ctor(path){
+		this.js = ..string.load(path);
+		
+		this.langCore = ..core.lang();
+		this.langAO = this.langCore.read(this.js);
+		assert(this.langAO, "WARNING: FAIL TO READ current language FROM main.js!");
+		
+		this.langListCore = ..core.langList();
+		this.langListAO = this.langListCore.read(this.js);
+		assert(this.langListAO, "WARNING: FAIL TO READ language list FROM main.js!");
+		
+		this.textButtonsCore = ..core.textButtons();
+		this.textButtonsAO = this.textButtonsCore.read(this.js);
+		assert(this.textButtonsAO, "WARNING: FAIL TO READ text buttons FROM main.js!");
+		
+		this.fontNamesCore = ..core.fontNames();
+		this.fontNamesAO = this.fontNamesCore.read(this.js);
+		assert(this.textButtonsAO, "WARNING: FAIL TO READ font names FROM main.js!");
+		
+		this.baseIconCore = ..core.icon(this.textButtonsAO[1][6]);
+		this.baseIconAO = this.baseIconCore.read(this.js);
+		assert(this.baseIconAO, "WARNING: FAIL TO READ base icon FROM main.js!");
+		
+		this.baseFontDefCore = ..core.fontDef(this.textButtonsAO[1][3]);
+		this.baseFontDefAO = this.baseFontDefCore.read(this.js);
+		assert(this.baseFontDefAO, "WARNING: FAIL TO READ base font FROM main.js!");
+	};
+	save = lambda(path) ..string.save(path, this.js);
+	
+	getLangList = lambda() ..table.clone(this.langListAO);
+	getLang = lambda() ..table.clone(this.langAO);
+	setLang = function(code) begin
+		var newLangAO = ..table.filter(this.langListAO, lambda(v) code==v.code)[1]   :  {code="en", label="English", js=`{code:"en",label:"English"}`}
+		this.js = this.langCore.write(this.js, newLangAO);
+		assert(this.js, "WARNING: FAIL TO WRITE language TO main.js!");
+	end;
+	
+	addTextButton = function(buttonName, fontName, iconName) begin
+		if(..string.match(buttonName, `["']`)==null){
+			buttonName = '"' ++ buttonName ++ '"';
+		}
+		var template = this.textButtonsAO[1];
+		var newButtonAO = {template[1], template[2], fontName, buttonName, template[5], iconName, template[7]}
+		..table.push(this.textButtonsAO, newButtonAO);
+		this.js = this.textButtonsCore.write(this.js, this.textButtonsAO);
+		assert(this.js, "WARNING: FAIL TO ADD text button TO main.js!");
+	end;
+	addFontName = function(name) begin
+		if(..table.find(this.fontNamesAO, lambda(v) name==v[1])) return null;
+		..table.push(this.fontNamesAO, {name, #this.fontNamesAO+1});
+		this.js = this.fontNamesCore.write(this.js, this.fontNamesAO);
+		assert(this.js, "WARNING: FAIL TO ADD font name TO main.js!");
+	end;
+	addIcon = function(name, path, width=896, height=512) begin
+		var data = ..string.match(..string.load(path) : "", `\<path.+?d="(.+?)"`);
+		assert(data, "WARNING: FAIL TO READ svg FILE!");
+		var newIconAO = {name=name, data=data, width=width, height=height};
+		this.js = this.baseIconCore.insert(this.js, newIconAO);
+		assert(this.js, "WARNING: FAIL TO ADD icon TO main.js!");
+	end;
+	addFontDef = function(name, path) begin
+		if(..table.find({"Virgil", "Helvetica", "Cascadia"}, lambda(v) v==name)) return null; 
+		var fontType = ..fsys.getExtensionName(path);
+		var base64 = ..crypt.bin.encodeBase64(..string.load(path));
+		assert(fontType ? base64, "ERROR: FAIL TO READ font FILE!");
+		var src = ..string.concat(
+			`url("data:font/`  ,  fontType  ,  `;charset=utf-8;base64,`  ,  base64  , `")`
+		);
+		var newFontAO = {name=name, src=src};
+		this.js = this.baseFontDefCore.insert(this.js, newFontAO);
+		assert(this.js, "WARNING: FAIL TO ADD font definition TO main.js!");
+	end;
+	quickPatch = function(lang="zh-CN", buttonName="中文手写", fontName="Muyao", iconName="cnHandIcon", fontPath="/res/fonts/Muyao-Softbrush.ttf", iconPath="/res/icons/cnHandIcon.svg") begin
+		this.setLang(lang);
+		this.addTextButton(buttonName, fontName, iconName);
+		this.addFontName(fontName);
+		this.addIcon(iconName, iconPath);
+		this.addFontDef(fontName, fontPath);
+	end;
+	
+	// ATTENTION: THE FOLLOWING delete FUNCTIONS ARE NOT RECOMMENDED TO USE BECAUSE OF PERFORMANCE PROBLEMS!
+	deleteTextButton = function(buttonName) begin
+		if(..string.match(buttonName, `["']`)==null){
+			buttonName = '"' ++ buttonName ++ '"';
+		}
+		this.textButtonsAO = ..table.filter(this.textButtonsAO, lambda(v) v[4]!=buttonName )
+		this.js = this.textButtonsCore.write(this.js, this.textButtonsAO);
+		assert(this.js, "WARNING: FAIL TO DELETE text button FROM main.js!");
+	end;
+	deleteFontName = function(name) begin
+		assertf(..table.find({"Virgil", "Helvetica", "Cascadia"}, lambda(v) v==name), "WARNING: CAN'T DELETE A base font name!")
+		this.fontNamesAO = ..table.filter(this.fontNamesAO, lambda(v) v[2]!=name )
+		this.js = this.fontNamesCore.write(this.js, this.fontNamesAO);
+		assert(this.js, "WARNING: FAIL TO DELETE font name FROM main.js!");
+	end;
+	deleteIcon = function(name) begin
+		var iconCore = ..core.icon(name);
+		var iconCoreAO = iconCore.read(this.js);
+		assert(iconCoreAO, "WARNING: FAIL TO READ icon FROM main.js!");
+		this.js = iconCore.remove(this.js);
+		assert(this.js, "WARNING: FAIL TO DELETE icon FROM main.js!");
+	end;
+	deleteFontDef = function(name) begin
+		assertf(..table.find({"Virgil", "Helvetica", "Cascadia"}, lambda(v) v==name), "WARNING: CAN'T DELETE A base font def!")
+		var fontDefCore = ..core.fontDef(name);
+		var fontDefCoreAO = fontDefCore.read(this.js);
+		assert(fontDefCoreAO, "WARNING: FAIL TO DELETE font definition FROM main.js!");
+		this.js = fontDefCore.remove(this.js);
+		assert(this.js, "WARNING: FAIL TO DELETE font definition FROM main.js!");
+	end;
+	quickRestore = function(buttonName="中文手写", fontName="Muyao", iconName="cnHandIcon") begin
+		this.setLang("en");
+		this.deleteTextButton(buttonName);
+		this.deleteFontName(fontName);
+		this.deleteIcon(iconName);
+		this.deleteFontDef(fontName);
+	end;
+}

@@ -1,0 +1,84 @@
+import console;
+import string.list;
+import fsys;
+import core.mainjs;
+
+var main = function() begin
+	var args = string.list(_CMDLINE, "\s+"); // excalipatch.exe src=main.js lang="zh-CN" button="中文手写" font="XXX.ttf" icon="XXX.svg"
+
+	console.writeText(">>> Locating js file: ");
+	var srcPath = args.src ? string.trim(args.src, `'"`) : "main.js"
+	assert(io.exist(srcPath), "ERROR: source FILE DOES NOT EXIST!");
+	console.log(srcPath);
+	if(string.find(string.load(srcPath), "@EXCALIPATCH_FONT")){
+		console.writeColorText('\nWARNING: The file has already been patched. Are you sure to patch it again (NOT RECOMMENDED)?', console.color.red, console.color.white);
+		var ans = console.askYesNo("");
+		if(!ans) return null; 
+	}
+	
+	console.writeText(">>> Preparing output location: ");
+	var destPath = srcPath;
+	while( var i = 0; i++; true ) {
+		destPath = srcPath ++ ".patched" ++ i;
+		if(!io.exist(destPath)) break;
+	}
+	console.log(destPath);
+	
+	console.writeText(">>> Preparing UI language: ");
+	var langCode = args.lang ? string.trim(args.lang, `'"`) : "zh-CN"
+	console.log(langCode);
+	
+	console.writeText(">>> Preparing button name: ");
+	var buttonName = args.button ? string.trim(args.button, `'"`) : "中文手写"
+	console.log(buttonName);
+	
+	console.writeText(">>> Preparing font file: ");
+	var fontPath = args.font ? string.trim(args.font, `'"`) : null;
+	var fontName = "";
+	if(!fontPath){
+		fsys.enum( "/", "*.*",
+			function(dirname,filename,fullpath,findData){ 
+				if(filename){
+					var ext = fsys.getExtensionName(filename);
+					if(ext=="ttf" or ext=="otf" or ext=="woff" or ext=="woff2") {
+						fontPath = fullpath;
+						fontName = string.match(filename, "^(.+?)\.\w+?$");
+						return false; 
+					}
+				}
+			} 
+			,/*如果此参数为false则忽略子目录*/
+		);
+	}
+	assert(io.exist(fontPath), "ERROR: font DOES NOT EXIST!");
+	console.log(fontName);
+	
+	console.writeText(">>> Preparing icon file: ");
+	var iconPath = args.icon ? string.trim(args.icon, `'"`) : "\res\icons\cnHandIcon.svg"
+	var iconName = ""
+	assert(string.load(iconPath), "ERROR: icon FILE DOES NOT EXIST!");
+	iconName = string.match(fsys.getFileName(iconPath), "^(.+?)\.\w+?$");
+	console.log(fsys.getFileName(iconName));
+	
+	console.writeText(">>> Applying patch... ");
+	var mainjs = core.mainjs(srcPath);
+	mainjs.quickPatch(langCode, buttonName, "EXCALIPATCH_FONT", "EXCALIPATCH_ICON", fontPath, iconPath);
+	mainjs.save(destPath);
+	console.writeColorText('Done!\n', console.color.yellow, console.color.black);
+end;
+
+console.setTitle("Excalipatch v0.0.1");
+console.open();
+
+try{
+	main();
+}
+catch(e){
+	console.log(e);
+}
+
+console.writeText('\nTo open issues or pull requests, please visit excalipatch reposity: ');
+console.writeColorText("https://github.com/tswwe/excalipath", console.color.yellow, console.color.black);
+
+
+console.pause(true, "Press any key to exit...");
