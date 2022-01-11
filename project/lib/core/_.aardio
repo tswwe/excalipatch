@@ -8,22 +8,22 @@ class gap{
 	ctor( ){
 		..table.gc(this, "close");
 	}
-	clip = lambda(jsAll) null;
+	clip = lambda(jsAll, version) null;
 	paste = lambda(jsAll, jsBlockOld, jsBlockNew) ..string.replace(jsAll,  "<@@"++jsBlockOld++"@>",  jsBlockNew);
-	fromJs = lambda(jsBlock) null;
-	toJs = lambda(aarObj, jsBlockOld) null;
+	fromJs = lambda(jsBlock, version) null;
+	toJs = lambda(aarObj, jsBlockOld, version) null;
 	jsBlock = null;
-	read = function(jsAll) begin
-		this.jsBlock = this.clip(jsAll);
+	read = function(jsAll, version) begin
+		this.jsBlock = this.clip(jsAll, version);
 		if(this.jsBlock==null) return null, "WARNING: clip FUNCTION FAILED!";
 		
-		var aarObj = this.fromJs(this.jsBlock);
+		var aarObj = this.fromJs(this.jsBlock, version);
 		if(aarObj==null) return null, "WARNING: fromJs FUNCTION FAILED!";
 		return aarObj;
 	end;
-	write = function(jsAll, aarObjNew, isInsert) begin
+	write = function(jsAll, aarObjNew, isInsert, version) begin
 		assert(aarObjNew,  "ERROR: write FUNCTION LACKS OF PARAMETER aarObjNew!");
-		var jsBlockNew = this.toJs(aarObjNew, this.jsBlock);
+		var jsBlockNew = this.toJs(aarObjNew, this.jsBlock, version);
 		if(jsBlockNew==null) return null, "WARNING: toJs FUNCTION FAILED!"; 
 		
 		var jsAllNew = this.paste(jsAll, this.jsBlock, isInsert ? this.jsBlock++jsBlockNew : jsBlockNew);
@@ -31,7 +31,7 @@ class gap{
 		this.jsBlock = jsBlockNew;
 		return jsAllNew; 
 	end;
-	insert = lambda(jsAll, aarObjNew) this.write(jsAll, aarObjNew, true) ;
+	insert = lambda(jsAll, aarObjNew, version) this.write(jsAll, aarObjNew, true, version) ;
 	remove = function(jsAll) begin
 		var jsAllNew = this.paste(jsAll, this.jsBlock, "");
 		if(jsAllNew==null) return null, "WARNING: paste FUNCTION FAILED!";
@@ -154,25 +154,33 @@ class fontNames{
 
 class icon{
 	/**
+		v1.5.15
 		nl2=i2().memo(e3=>es2((0,v2.jsx)("path",{fill:"var(--icon-fill-color)",d:"..."}),{width:448,height:512})),|
 	     1(iconName)                                                               2              3         4
+	    
+		v1.5.16
+		Ds=s().memo(function(e3){return e3.theme,zl((0,I2.jsx)("path",{fill:"var(--icon-fill-color)",d:"..."}),{width:448,height:512})})
+		1(iconName)                                                                                     2(data)        3          4                                
 	**/
 	ctor(iconName) {           // if you want to add a new icon: *iconName* must be baseIconName; call *insert* method rather than *write*
 		this = ..core.gap();   // if you want to delete an existed icon: *iconName* be target icon name; call *remove* method
 	}
-	clip = function(jsAll) begin
-		var pattern = iconName ++ `=.{1,25}?memo.+?,d\:".+?"\}\),\{width\:.+?\}\)\),`
+	clip = function(jsAll, version) begin
+		var pattern = iconName ++ `=.{1,25}?memo.+?,d\:".+?"\}\),\{width\:.+?\}\)\}\),`
+		if(version=="1.5.15") pattern = iconName ++ `=.{1,25}?memo.+?,d\:".+?"\}\),\{width\:.+?\}\)\),` ;
 		var jsBlock = ..string.match(jsAll, pattern);
 		return jsBlock;
 	end;
-	fromJs = function(jsBlock) begin
-		var pattern = //(\w+?)=.+?d\:"(.+?)"\}\),\{width\:(.+?),height\:(.+?)\}\)\),
+	fromJs = function(jsBlock, version) begin
+		var pattern = //(\w+?)=.+?d\:"(.+?)"\}\),\{width\:(.+?),height\:(.+?)\}\)\}\),
+		if(version=="1.5.15") pattern = //(\w+?)=.+?d\:"(.+?)"\}\),\{width\:(.+?),height\:(.+?)\}\)\),
 		var name, data, width, height = ..string.match(jsBlock, pattern);
 		assert(name==iconName, "Error: icon name is not equal!");
 		return data!=null ? {name=name, data=data, width=width, height=height} : null;
 	end;
-	toJs = function(aarObj, jsBlockOld) begin
-		var pattern = ..string.format(`%s(=.+?,d\:").+?("\}\),\{width\:).+?(,height\:).+?(\}\)\),)`, iconName)
+	toJs = function(aarObj, jsBlockOld, version) begin
+		var pattern = ..string.format(`%s(=.+?,d\:").+?("\}\),\{width\:).+?(,height\:).+?(\}\)\}\),)`, iconName)
+		if(version=="1.5.15") pattern = ..string.format(`%s(=.+?,d\:").+?("\}\),\{width\:).+?(,height\:).+?(\}\)\),)`, iconName)
 		var js = ..string.format("%s\1%s\2%s\3%s\4", aarObj.name, aarObj.data, aarObj.width, aarObj.height)
 		var jsBlockNew = ..string.replace(jsBlockOld, pattern, js);
 		return jsBlockNew;

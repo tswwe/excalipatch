@@ -5,8 +5,9 @@ import fsys;
 import crypt.bin;
 
 class mainjs{
-	ctor(path){
+	ctor(path, version){
 		this.js = ..string.load(path);
+		this.version = version;
 		
 		this.langCore = ..core.lang();
 		this.langAO = this.langCore.read(this.js);
@@ -24,8 +25,8 @@ class mainjs{
 		this.fontNamesAO = this.fontNamesCore.read(this.js);
 		assert(this.textButtonsAO, "WARNING: FAIL TO READ font names FROM main.js!");
 		
-		this.baseIconCore = ..core.icon(this.textButtonsAO[1][6]);
-		this.baseIconAO = this.baseIconCore.read(this.js);
+		this.baseIconCore = ..core.icon(this.textButtonsAO[1][6], this.version);
+		this.baseIconAO = this.baseIconCore.read(this.js, this.version);
 		assert(this.baseIconAO, "WARNING: FAIL TO READ base icon FROM main.js!");
 		
 		this.baseFontDefCore = ..core.fontDef(this.textButtonsAO[1][3]);
@@ -62,7 +63,7 @@ class mainjs{
 		var data = ..string.match(..string.load(path) : "", `\<path.+?d="(.+?)"`);
 		assert(data, "WARNING: FAIL TO READ svg FILE!");
 		var newIconAO = {name=name, data=data, width=width, height=height};
-		this.js = this.baseIconCore.insert(this.js, newIconAO);
+		this.js = this.baseIconCore.insert(this.js, newIconAO, this.version);
 		assert(this.js, "WARNING: FAIL TO ADD icon TO main.js!");
 	end;
 	addFontDef = function(name, path) begin
