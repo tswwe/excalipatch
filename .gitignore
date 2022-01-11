@@ -5,7 +5,8 @@ project/build_error_log.txt
 
 # aardio local res
 project/res/fonts/
-project/main.js
+project/manifest.json*
+project/main.js*
 
 # Compiled Lua sources
 luac.out

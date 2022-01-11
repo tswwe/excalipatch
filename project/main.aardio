@@ -19,8 +19,8 @@ var main = function() begin
 	console.writeText(">>> Detecting file version: ");
 	var manifestPath = fsys.joinpath(fsys.getParentDir(io.fullpath(srcPath)), "manifest.json");
 	var version = io.exist(manifestPath) ? string.match(string.load(manifestPath), `"version"\: ?"(.+?)",`)
-	console.log(version : "UNKNOWN");
-	console.log("    NOTE: Excalipatch needs obsidian-excalidraw-plugin version to be 1.5.15 or newer. Old versions may not work.");
+	console.log(version : "Unknown");
+	console.log("    NOTE: Excalipatch may not work for obsidian-excalidraw-plugin other than v1.5.16.");
 	
 	console.writeText(">>> Preparing output location: ");
 	var destPath = srcPath;
@@ -67,13 +67,13 @@ var main = function() begin
 	console.log(fsys.getFileName(iconName));
 	
 	console.writeText(">>> Applying patch... ");
-	var mainjs = core.mainjs(srcPath);
+	var mainjs = core.mainjs(srcPath, version);
 	mainjs.quickPatch(langCode, buttonName, "EXCALIPATCH_FONT", "EXCALIPATCH_ICON", fontPath, iconPath);
 	mainjs.save(destPath);
 	console.writeColorText('Done!\n', console.color.yellow, console.color.black);
 end;
 
-console.setTitle("Excalipatch v0.0.2");
+console.setTitle("Excalipatch v0.0.3");
 console.open();
 
 try{
@@ -83,7 +83,7 @@ catch(e){
 	console.log(e);
 }
 
-console.writeText('\nTo open issues or pull requests, please visit excalipatch reposity: ');
+console.writeText('\nIf Excalipatch fails to patch, or the patched file fails to work,\n    please open an issue at: ');
 console.writeColorText("https://github.com/tswwe/excalipath", console.color.yellow, console.color.black);
 
 console.pause(true, "Press any key to exit...");
