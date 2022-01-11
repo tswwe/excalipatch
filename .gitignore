@@ -1,8 +1,11 @@
-# aardio
-.build/
-dist/
-res/fonts/
-build_error_log.txt
+# aardio compile
+project/.build/
+project/dist/
+project/build_error_log.txt
+
+# aardio local res
+project/res/fonts/
+project/main.js
 
 # Compiled Lua sources
 luac.out
