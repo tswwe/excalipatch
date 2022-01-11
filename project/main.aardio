@@ -16,6 +16,12 @@ var main = function() begin
 		if(!ans) return null; 
 	}
 	
+	console.writeText(">>> Detecting file version: ");
+	var manifestPath = fsys.joinpath(fsys.getParentDir(io.fullpath(srcPath)), "manifest.json");
+	var version = io.exist(manifestPath) ? string.match(string.load(manifestPath), `"version"\: ?"(.+?)",`)
+	console.log(version : "UNKNOWN");
+	console.log("    NOTE: Excalipatch needs obsidian-excalidraw-plugin version to be 1.5.15 or newer. Old versions may not work.");
+	
 	console.writeText(">>> Preparing output location: ");
 	var destPath = srcPath;
 	while( var i = 0; i++; true ) {
@@ -67,7 +73,7 @@ var main = function() begin
 	console.writeColorText('Done!\n', console.color.yellow, console.color.black);
 end;
 
-console.setTitle("Excalipatch v0.0.1");
+console.setTitle("Excalipatch v0.0.2");
 console.open();
 
 try{
@@ -79,6 +85,5 @@ catch(e){
 
 console.writeText('\nTo open issues or pull requests, please visit excalipatch reposity: ');
 console.writeColorText("https://github.com/tswwe/excalipath", console.color.yellow, console.color.black);
-
 
 console.pause(true, "Press any key to exit...");
