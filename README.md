@@ -1,4 +1,8 @@
-⚠️ This repo is just a workaround. Once a full solution comes out (we are working on it, see this [issue](https://github.com/zsviczian/obsidian-excalidraw-plugin/issues/14#issuecomment-1008651870) and  [PR](https://github.com/zsviczian/obsidian-excalidraw-plugin/issues/14#issuecomment-1008651870)), this repo would be deprecated.
+# DEPRECATED
+
+~~⚠️ This repo is just a workaround. Once a full solution comes out (we are working on it, see this [issue](https://github.com/zsviczian/obsidian-excalidraw-plugin/issues/14#issuecomment-1008651870) and  [PR](https://github.com/zsviczian/excalidraw/pull/55), this repo would be deprecated.~~
+
+⚠️Thanks to the fast response and hard working of [@zsviczian](https://github.com/zsviczian), the feature of setting local fonts for obsidian-excalidraw-plugin has come out from [release 1.5.17](https://github.com/zsviczian/obsidian-excalidraw-plugin/releases/tag/1.5.17). So I'm happy to announce that **this repository is deprecated**.
 
 ---
 

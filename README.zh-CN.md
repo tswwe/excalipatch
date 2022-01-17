@@ -1,4 +1,8 @@
-⚠️ 本仓库只是一个临时的应对方案。等到较完善的方案完成（正在尝试中…见该 [Issue](https://github.com/zsviczian/obsidian-excalidraw-plugin/issues/14#issuecomment-1008651870) 和 [PR](https://github.com/zsviczian/excalidraw/pull/55)），本仓库将废弃。
+# 已废弃！
+
+~~⚠️ 本仓库只是一个临时的应对方案。等到较完善的方案完成（正在尝试中…见该 [Issue](https://github.com/zsviczian/obsidian-excalidraw-plugin/issues/14#issuecomment-1008651870) 和 [PR](https://github.com/zsviczian/excalidraw/pull/55)），本仓库将废弃。~~
+
+⚠️在 [@zsviczian](https://github.com/zsviczian) 的支持和努力下，obsidian-excalidraw-plugin 中使用本地字体的功能已于 [1.5.17 版](https://github.com/zsviczian/obsidian-excalidraw-plugin/releases/tag/1.5.17)实现。因此，**本仓库宣告废弃**。
 
 ---
 
